@@ -6,6 +6,7 @@
 #include "spinlock.h"
 #include "proc.h"
 
+// extern int num_syscall;
 uint64
 sys_exit(void)
 {
@@ -24,6 +25,7 @@ sys_getpid(void)
 uint64
 sys_fork(void)
 {
+  // printf("\n*** fork %d ****\n", num_syscall);
   return fork();
 }
 

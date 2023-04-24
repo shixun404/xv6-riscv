@@ -4,6 +4,7 @@
 #include "riscv.h"
 #include "spinlock.h"
 #include "proc.h"
+// #include "proc.c"
 #include "syscall.h"
 #include "defs.h"
 
@@ -80,6 +81,24 @@ argstr(int n, char *buf, int max)
 }
 
 // Prototypes for the functions that handle system calls.
+extern struct proc proc[NPROC];
+// extern char *states[6];
+char *states[] = {
+  [UNUSED]    "unused",
+  [USED]      "used",
+  [SLEEPING]  "sleep ",
+  [RUNNABLE]  "runble",
+  [RUNNING]   "run   ",
+  [ZOMBIE]    "zombie"
+  };
+extern struct {
+  struct spinlock lock;
+  struct run *freelist;
+} kmem;
+
+struct run {
+  struct run *next;
+};
 extern uint64 sys_fork(void);
 extern uint64 sys_exit(void);
 extern uint64 sys_wait(void);
@@ -101,6 +120,8 @@ extern uint64 sys_unlink(void);
 extern uint64 sys_link(void);
 extern uint64 sys_mkdir(void);
 extern uint64 sys_close(void);
+uint64 sys_sysinfo(void);
+uint64 sys_procinfo(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -126,22 +147,73 @@ static uint64 (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_sysinfo] sys_sysinfo,
+[SYS_procinfo] sys_procinfo
 };
+
+int num_syscall = 0;
 
 void
 syscall(void)
 {
   int num;
   struct proc *p = myproc();
-
   num = p->trapframe->a7;
   if(num > 0 && num < NELEM(syscalls) && syscalls[num]) {
     // Use num to lookup the system call function for num, call it,
     // and store its return value in p->trapframe->a0
     p->trapframe->a0 = syscalls[num]();
+    num_syscall += 1;
   } else {
     printf("%d %s: unknown sys call %d\n",
             p->pid, p->name, num);
+    printf("\n*** %d ****\n", num_syscall);
     p->trapframe->a0 = -1;
   }
+}
+
+
+uint64
+sys_sysinfo(void)
+{
+  int arg = 0;
+  int ret_val = 0;
+  argint(0, &arg);
+  printf("\n*** %d ****\n", arg);
+  if(arg == 0){
+    struct proc *p;
+    int num_proc = 0;
+    printf("\n");
+    for(p = proc; p < &proc[NPROC]; p++){
+      if(p->state == UNUSED)
+        continue;
+      if(p->state >= 0 && p->state < NELEM(states) && states[p->state])
+        num_proc += 1;
+    }
+    ret_val = num_proc;
+  } 
+  else if(arg == 1){
+    ret_val = num_syscall;
+  }
+  else if(arg == 2){
+    struct run *r = kmem.freelist;
+    int num_free_page = 0;
+    acquire(&kmem.lock);
+    while(r){
+      r = r->next;
+      num_free_page += 1;
+    }
+    release(&kmem.lock);
+    ret_val = num_free_page;
+  }
+  else{
+    ret_val = -1;
+  }
+  return ret_val;
+}
+
+uint64
+sys_procinfo(void)
+{
+  return 0;
 }
