@@ -46,7 +46,7 @@ print_sysinfo();
 // procinfo(&param); // calls 10 times
 // printf("[procinfo %d] ppid: %d, syscalls: %d, page usage: %d\n",
 // getpid(), param.ppid, param.syscall_count, param.page_usage);
-// while (1);
+// while (1); 
 // }
 // else { // parent
 // proc_pid[i] = ret;
