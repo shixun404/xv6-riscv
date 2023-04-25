@@ -120,6 +120,7 @@ extern uint64 sys_unlink(void);
 extern uint64 sys_link(void);
 extern uint64 sys_mkdir(void);
 extern uint64 sys_close(void);
+extern struct spinlock wait_lock;
 uint64 sys_sysinfo(void);
 uint64 sys_procinfo(void);
 
@@ -164,10 +165,11 @@ syscall(void)
     // and store its return value in p->trapframe->a0
     p->trapframe->a0 = syscalls[num]();
     num_syscall += 1;
+    myproc()->num_syscall += 1;
   } else {
     printf("%d %s: unknown sys call %d\n",
             p->pid, p->name, num);
-    printf("\n*** %d ****\n", num_syscall);
+    // printf("\n*** %d ****\n", num_syscall);
     p->trapframe->a0 = -1;
   }
 }
@@ -179,11 +181,10 @@ sys_sysinfo(void)
   int arg = 0;
   int ret_val = 0;
   argint(0, &arg);
-  printf("\n*** %d ****\n", arg);
+  // printf("\n*** %d ****\n", arg);
   if(arg == 0){
     struct proc *p;
     int num_proc = 0;
-    printf("\n");
     for(p = proc; p < &proc[NPROC]; p++){
       if(p->state == UNUSED)
         continue;
@@ -215,5 +216,20 @@ sys_sysinfo(void)
 uint64
 sys_procinfo(void)
 {
+  uint64 dest;
+  argaddr(0, &dest);
+  struct {
+    int ppid;
+    int syscall_count;
+    int page_usage;
+  }pinfo;
+  struct proc *p = myproc();
+  acquire(&wait_lock);
+  pinfo.ppid = p->parent->pid;
+  release(&wait_lock);
+  pinfo.syscall_count = p->num_syscall;
+  pinfo.page_usage = (int)((p->sz+4095) / 4096);
+  if(copyout(p->pagetable, dest, (char*)&pinfo, sizeof(pinfo))<0)
+  return -1;
   return 0;
 }
