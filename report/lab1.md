@@ -1,6 +1,6 @@
 # Lab1 Report
 
-This report describes our work on Lab 1. Section 1 presents a list of modified files. Section 2 explained our implementation and modification to the source files. Next, section 3 presents how the syscall is processed. Finally, section 4 gives a summary of the contribution of each member. Here is the link to our video https://drive.google.com/file/d/1_8Wb-Zpq0F4DW5TCNLYu4_Z0OlQ0l7Ks/view?usp=sharing.
+This report describes our work on Lab 1. Section 1 presents a list of modified files. Section 2 explained our implementation and modification to the source files. Next, section 3 presents how the syscall is processed. Finally, section 4 gives a summary of the contribution of each member. Here is the link to our video https://drive.google.com/file/d/1_8Wb-Zpq0F4DW5TCNLYu4_Z0OlQ0l7Ks/view?usp=sharing. Shixun Wu and Enzuo Zhu contribute to this project equally.
 
 ## List of modified files:
 ```
