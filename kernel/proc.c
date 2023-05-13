@@ -125,6 +125,12 @@ found:
   p->pid = allocpid();
   p->state = USED;
   p->num_syscall = 0;
+  p->tick = 0;
+  p->tickets = 10000;
+  #if defined (STRIDE)
+  p->stride = 1;
+  p->pass = 0;
+  #endif
 
   // Allocate a trapframe page.
   if((p->trapframe = (struct trapframe *)kalloc()) == 0){
@@ -442,6 +448,14 @@ wait(uint64 addr)
 //  - swtch to start running that process.
 //  - eventually that process transfers control
 //    via swtch back to the scheduler.
+unsigned short lfsr = 0xACE1u;
+unsigned short bit;
+unsigned short rand()
+{
+bit = ((lfsr >> 0) ^ (lfsr >> 2) ^ (lfsr >> 3) ^ (lfsr >> 5)) & 1;
+return lfsr = (lfsr >> 1) | (bit << 15);
+}
+struct spinlock proc_lock;
 void
 scheduler(void)
 {
@@ -449,16 +463,94 @@ scheduler(void)
   struct cpu *c = mycpu();
   
   c->proc = 0;
+  // int flag = 10;
   for(;;){
+
     // Avoid deadlock by ensuring that devices can interrupt.
     intr_on();
+    // acquire(&proc_lock);
+    #if defined(LOTTERY)
+    int tot_tickets = 0;
+    for(p = proc; p < &proc[NPROC]; p++) {
+      acquire(&p->lock);
+      if(p->state == RUNNABLE) {
+        tot_tickets += p->tickets;
+      }
+      release(&p->lock);
+    }
+    // if (flag > 0){printf("LOTTERY\nNumOfTickets::%d\n",tot_tickets);flag--;}
+    int rand_lottery = rand();
+    
+    rand_lottery = rand_lottery % tot_tickets;
+    // int init_lottery = rand_lottery;
+    for(p = proc; p < &proc[NPROC]; p++) {
+      
+      acquire(&p->lock);
+      if(p->state == RUNNABLE) {
+        
+        if(rand_lottery < p->tickets){
+          
+          p->tick++;
+          p->state = RUNNING;
+          c->proc = p;
+          // printf("pid: %d, ticks: %d\n", p->pid, p->tick);
+          // printf("NumOfTickets:%d, init_lottery: %d,, cur_lottery: %d\n",tot_tickets, init_lottery, rand_lottery);
+          swtch(&c->context, &p->context);
 
+          // Process is done running for now.
+          // It should have changed its p->state before coming back.
+          c->proc = 0;
+          release(&p->lock);
+          break;
+        }
+        else{
+          rand_lottery -= p->tickets;
+        }
+      }
+      release(&p->lock);
+    }
+
+    #elif defined(STRIDE)
+    int min_pass = 2147483647;
+    for(p = proc; p < &proc[NPROC]; p++) {
+      acquire(&p->lock);
+      if (p->state == RUNNABLE){
+        if (p->pass < min_pass) min_pass = p->pass;
+      }
+      release(&p->lock);
+    }
+    for(p = proc; p < &proc[NPROC]; p++) {
+      
+      acquire(&p->lock);
+      if(p->state == RUNNABLE) {
+        if(p->pass == min_pass){
+          
+          p->tick++;
+          p->pass += p->stride;
+          p->state = RUNNING;
+          c->proc = p;
+          // printf("pid: %d, ticks: %d\n", p->pid, p->tick);
+          // printf("NumOfTickets:%d, init_lottery: %d,, cur_lottery: %d\n",tot_tickets, init_lottery, rand_lottery);
+          swtch(&c->context, &p->context);
+
+          // Process is done running for now.
+          // It should have changed its p->state before coming back.
+          c->proc = 0;
+          release(&p->lock);
+          break;
+        }
+      }
+      release(&p->lock);
+    }
+    #else
     for(p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
       if(p->state == RUNNABLE) {
         // Switch to chosen process.  It is the process's job
         // to release its lock and then reacquire it
         // before jumping back to us.
+        // printf("pid: %d, ticks: %d\n", p->pid, p->tick);
+        p->tick++;
         p->state = RUNNING;
         c->proc = p;
         swtch(&c->context, &p->context);
@@ -469,6 +561,8 @@ scheduler(void)
       }
       release(&p->lock);
     }
+    #endif
+    // release(&proc_lock);
   }
 }
 
@@ -479,6 +573,7 @@ scheduler(void)
 // be proc->intena and proc->noff, but that would
 // break in the few places where a lock is held but
 // there's no process.
+
 void
 sched(void)
 {

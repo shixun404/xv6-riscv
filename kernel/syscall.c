@@ -124,6 +124,9 @@ extern struct spinlock wait_lock;
 uint64 sys_sysinfo(void);
 uint64 sys_procinfo(void);
 
+uint64 sys_sched_statistics(void);
+uint64 sys_sched_tickets(void);
+
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
 static uint64 (*syscalls[])(void) = {
@@ -149,7 +152,9 @@ static uint64 (*syscalls[])(void) = {
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
 [SYS_sysinfo] sys_sysinfo,
-[SYS_procinfo] sys_procinfo
+[SYS_procinfo] sys_procinfo,
+[SYS_sched_statistics] sys_sched_statistics,
+[SYS_sched_tickets] sys_sched_tickets
 };
 
 int num_syscall = 0;
@@ -231,5 +236,30 @@ sys_procinfo(void)
   pinfo.page_usage = (int)((p->sz+4095) / 4096);
   if(copyout(p->pagetable, dest, (char*)&pinfo, sizeof(pinfo))<0)
   return -1;
+  return 0;
+}
+
+
+uint64 sys_sched_statistics(void){
+  struct proc *p;
+  for(p = proc; p < &proc[NPROC]; p++){
+     if(p->state == UNUSED)
+        continue;
+      if(p->state >= 0 && p->state < NELEM(states) && states[p->state])
+    printf("%d(%s): tickets: %d, ticks: %d\n", p->pid, p->name, p->tickets, p->tick);
+  }
+  return 0;
+}
+
+#define stride_K 10000
+uint64 sys_sched_tickets(void){
+  int value_tickets;
+  argint(0, &value_tickets);
+  if(value_tickets > 10000) return -1;
+  struct proc *p = myproc();
+  p->tickets = value_tickets;
+  #if defined(STRIDE)
+  p->stride = stride_K / p->tickets;
+  #endif
   return 0;
 }

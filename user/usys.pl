@@ -17,6 +17,8 @@ sub entry {
 
 entry("sysinfo");
 entry("procinfo");
+entry("sched_statistics");
+entry("sched_tickets");
 entry("fork");
 entry("exit");
 entry("wait");
