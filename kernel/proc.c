@@ -463,7 +463,7 @@ scheduler(void)
   struct cpu *c = mycpu();
   
   c->proc = 0;
-  // int flag = 10;
+  // int flag = 1;
   for(;;){
 
     // Avoid deadlock by ensuring that devices can interrupt.
@@ -511,6 +511,7 @@ scheduler(void)
     }
 
     #elif defined(STRIDE)
+    // if (flag > 0){printf("STRIDE\n");flag--;}
     int min_pass = 2147483647;
     for(p = proc; p < &proc[NPROC]; p++) {
       acquire(&p->lock);
@@ -777,3 +778,11 @@ procdump(void)
     printf("\n");
   }
 }
+/*
+make clean;make qemu LAB2=LOTTERY -j
+lab2_test 100 3 30 20 10
+lab2_test 100 2 19 1
+make clean;make qemu LAB2=STRIDE -j
+lab2_test 100 3 30 20 10
+lab2_test 100 2 19 1
+*/
