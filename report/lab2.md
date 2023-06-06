@@ -212,6 +212,20 @@ scheduler(void)
 ```
 
 
-### CLI output of lab1_test:
-![](result.png)
+## Part 3: Experiments
+### A:B:C:D = 8:4:2:1
+
+Simulation results for four clients, A, B, C, and D, with a 8:4:2:1 allocation. The following two figures are allocations by randomized lottery scheduler and deterministic stride scheduler.  The lottery scheduer shows significant variability while deterministic stride scheduler exhibits precise periodic behavior. The lottery scheduler has high variance for small ticket values.
+
+<img src="lottery_8_4_2_1.png" alt="Lottery Scheduler" width="300">
+
+<img src="stride_8_4_2_1.png" alt="Stride Scheduler" width="300">
+
+### A:B:C:D = 1:1:1:1
+
+Simulation results for four clients, A, B, C, and D, with a 1:1:1:1 allocation. The following two figures are allocations by randomized lottery scheduler and deterministic stride scheduler.  The lottery scheduer shows significant variability while deterministic stride scheduler exhibits precise periodic behavior. The lottery scheduler has high variance for small ticket values.
+
+<img src="lottery_1_1_1_1.png" alt="Lottery Scheduler" width="300">
+
+<img src="stride_1_1_1_1.png" alt="Stride Scheduler" width="300">
 
