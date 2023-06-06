@@ -877,8 +877,6 @@ uint64 sys_clone(void)
   int i;
   struct proc *np;
   struct proc *p = myproc();
-
-  
   
   acquire(&p->lock);
   p->num_thread++;
