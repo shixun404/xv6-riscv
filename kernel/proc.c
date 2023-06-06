@@ -126,6 +126,8 @@ found:
   p->state = USED;
   p->num_syscall = 0;
   p->tick = 0;
+  p->thread_id = 0;
+  p->num_thread = 0;
   p->tickets = 10000;
   #if defined (STRIDE)
   p->stride = 1;
@@ -156,26 +158,104 @@ found:
   return p;
 }
 
+
+struct proc*
+allocproc_thread(int pid, int tid, pagetable_t pagetable)
+{
+  struct proc *p;
+  for(p = proc; p < &proc[NPROC]; p++) {
+    acquire(&p->lock);
+    if(p->state == UNUSED) {
+      goto found;
+    } else {
+      release(&p->lock);
+    }
+  }
+  return 0;
+
+found:
+  p->pid = pid;
+  p->state = USED;
+  p->num_syscall = 0;
+  p->tick = 0;
+  p->thread_id = tid;
+  p->tickets = 10000;
+  p->pagetable = pagetable;
+  #if defined (STRIDE)
+  p->stride = 1;
+  p->pass = 0;
+  #endif
+
+  // Allocate a trapframe page.
+  if((p->trapframe = (struct trapframe *)kalloc()) == 0){
+    freeproc(p);
+    release(&p->lock);
+    return 0;
+  }
+
+  if(mappages(p->pagetable, TRAPFRAME - PGSIZE * (p->thread_id), PGSIZE,
+              (uint64)(p->trapframe), PTE_R | PTE_W) < 0){
+    uvmunmap(pagetable, TRAMPOLINE, 1, 0);
+    freeproc(p);
+    release(&p->lock);
+    return 0;
+  }
+
+
+  // An empty user page table.
+  // p->pagetable = proc_pagetable(p);
+  // if(p->pagetable == 0){
+  //   freeproc(p);
+  //   release(&p->lock);
+  //   return 0;
+  // }
+
+  // Set up new context to start executing at forkret,
+  // which returns to user space.
+  memset(&p->context, 0, sizeof(p->context));
+  p->context.ra = (uint64)forkret;
+  p->context.sp = p->kstack + PGSIZE;
+
+  return p;
+}
+
 // free a proc structure and the data hanging from it,
 // including user pages.
 // p->lock must be held.
 static void
 freeproc(struct proc *p)
 {
-  if(p->trapframe)
-    kfree((void*)p->trapframe);
-  p->trapframe = 0;
-  if(p->pagetable)
-    proc_freepagetable(p->pagetable, p->sz);
-  p->pagetable = 0;
-  p->sz = 0;
-  p->pid = 0;
-  p->parent = 0;
-  p->name[0] = 0;
-  p->chan = 0;
-  p->killed = 0;
-  p->xstate = 0;
-  p->state = UNUSED;
+  if(p->thread_id != 0){
+    if(p->trapframe)
+    uvmunmap(p->pagetable, TRAPFRAME - (PGSIZE * p->thread_id), 1, 0);
+    p->trapframe = 0;
+    p->pagetable = 0;
+    p->thread_id = 0;
+    p->sz = 0;
+    p->pid = 0;
+    p->parent = 0;
+    p->name[0] = 0;
+    p->chan = 0;
+    p->killed = 0;
+    p->xstate = 0;
+    p->state = UNUSED;
+  }
+  else{
+    if(p->trapframe)
+      kfree((void*)p->trapframe);
+    p->trapframe = 0;
+    if(p->pagetable)
+      proc_freepagetable(p->pagetable, p->sz);
+    p->pagetable = 0;
+    p->sz = 0;
+    p->pid = 0;
+    p->parent = 0;
+    p->name[0] = 0;
+    p->chan = 0;
+    p->killed = 0;
+    p->xstate = 0;
+    p->state = UNUSED;
+  }
 }
 
 // Create a user page table for a given process, with no user memory,
@@ -786,3 +866,61 @@ make clean;make qemu LAB2=STRIDE -j
 lab2_test 100 3 30 20 10
 lab2_test 100 2 19 1
 */
+
+
+
+uint64 sys_clone(void)
+{
+  uint64 stack;
+  argaddr(0, &stack);
+  if(stack == 0)return -1;
+  int i;
+  struct proc *np;
+  struct proc *p = myproc();
+
+  
+  
+  acquire(&p->lock);
+  p->num_thread++;
+  
+  int tid = p->num_thread;
+  int npid = p->pid;
+  pagetable_t npagetable = p->pagetable;
+  release(&p->lock);
+  // Allocate process.
+  if((np = allocproc_thread(npid, tid, npagetable)) == 0){
+    return -1;
+  }
+
+
+  np->sz = p->sz;
+
+  // copy saved user registers.
+  *(np->trapframe) = *(p->trapframe);
+
+  // Cause fork to return 0 in the child.
+  np->trapframe->a0 = 0;
+  np->trapframe->sp = (uint64)stack;
+
+  // increment reference counts on open file descriptors.
+  for(i = 0; i < NOFILE; i++)
+    if(p->ofile[i])
+      np->ofile[i] = filedup(p->ofile[i]);
+  np->cwd = idup(p->cwd);
+
+  safestrcpy(np->name, p->name, sizeof(p->name));
+
+
+
+  release(&np->lock);
+
+  acquire(&wait_lock);
+  np->parent = p;
+  release(&wait_lock);
+
+  acquire(&np->lock);
+  np->state = RUNNABLE;
+  release(&np->lock);
+
+  return tid;
+} 

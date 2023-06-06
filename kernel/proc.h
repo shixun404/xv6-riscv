@@ -109,4 +109,6 @@ struct proc {
   int tickets;
   int stride;
   int pass;
+  int thread_id;
+  int num_thread;
 };
