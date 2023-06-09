@@ -1,6 +1,6 @@
 #include "user/thread.h"
 int thread_create(void *(start_routine)(void*), void *arg){
-    uint64* user_stack = malloc(PGSIZE+1) + PGSIZE;
+    uint64* user_stack = malloc(PGSIZE) + PGSIZE;
     int ret = clone((void*) user_stack);
     if(ret < 0) return -1;
     if(ret != 0) return 0;

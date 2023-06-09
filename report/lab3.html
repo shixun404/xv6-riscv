@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>lab3.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="lab3-report-by-enzuo-zhu-and-shixun-wu">Lab3 Report by Enzuo Zhu and Shixun WU</h1>
+<p>This report describes our work on Lab 3. Section 1, 2 describes our implementation of Part 1, and 2. Section 3 demonstrates our experimental results.  Here is the link to our video https://drive.google.com/file/d/1tfDxuuGesUYgBNltttsX1xB672o0Gp48/view?usp=sharing.</p>
+<p>Enzuo Zhu and Shixun Wu contribute to this project equally.</p>
+<h2 id="part-1">Part 1:</h2>
+<h3 id="pcb-modification">PCB modification</h3>
+<p>We first add two int32 variables, namely <code>thread_id</code>, <code>num_thread</code> into the PCB struct as follows:</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Per-process state</span>
+<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">proc</span> {</span>
+  <span class="hljs-comment">// Lab3 addition</span>
+  <span class="hljs-keyword">int</span> thread_id; <span class="hljs-comment">// thread id of a process</span>
+  <span class="hljs-keyword">int</span> num_thread; <span class="hljs-comment">// number of thread of a process</span>
+};
+</div></code></pre>
+<h3 id="allocproc-modification">allocproc() modification</h3>
+<p>The newly added variables are initialized in function <code>allocproc</code> as follows:</p>
+<pre class="hljs"><code><div>found:
+  p-&gt;thread_id = <span class="hljs-number">0</span>;
+  p-&gt;num_thread = <span class="hljs-number">0</span>;
+</div></code></pre>
+<h3 id="new-kernel-function-allocprocthread">New kernel function allocproc_thread()</h3>
+<p>We add a function <code>allocproc_thread(int pid, int tid, pagetable_t pagetable)</code>. In this function, we first find an unused proc struct from process array. We initialize the <code>thread_id</code>, <code>pagetable</code> with the input argument. The <code>thread_id</code> is obtained from the variable <code>num_thread</code> of parent process. The <code>pagetable</code> is same with the parent process. After that, we allocate one page of <code>trapframe</code> for this thread. Then we map the physical address of <code>trapframe</code> below other <code>trapframe</code> at the top of the process's shared virtual address using the following code <code>mappages(p-&gt;pagetable, TRAPFRAME - PGSIZE * (p-&gt;thread_id), PGSIZE,(uint64)(p-&gt;trapframe), PTE_R | PTE_W)</code>. Finally, we empty the <code>context</code> of the thread, initialize <code>context.ra</code> with <code>forkret</code>, and <code>context.sp</code> with <code>p-&gt;kstack + PGSIZE;</code>.</p>
+<pre class="hljs"><code><div><span class="hljs-function">struct proc*
+<span class="hljs-title">allocproc_thread</span><span class="hljs-params">(<span class="hljs-keyword">int</span> pid, <span class="hljs-keyword">int</span> tid, <span class="hljs-keyword">pagetable_t</span> pagetable)</span>
+</span>{
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">proc</span> *<span class="hljs-title">p</span>;</span>
+  <span class="hljs-keyword">for</span>(p = proc; p &lt; &amp;proc[NPROC]; p++) {
+    acquire(&amp;p-&gt;lock);
+    <span class="hljs-keyword">if</span>(p-&gt;state == UNUSED) {
+      <span class="hljs-keyword">goto</span> found;
+    } <span class="hljs-keyword">else</span> {
+      <span class="hljs-built_in">release</span>(&amp;p-&gt;lock);
+    }
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+
+found:
+  p-&gt;pid = pid;
+  p-&gt;state = USED;
+  p-&gt;num_syscall = <span class="hljs-number">0</span>;
+  p-&gt;tick = <span class="hljs-number">0</span>;
+  p-&gt;thread_id = tid;
+  p-&gt;tickets = <span class="hljs-number">10000</span>;
+  p-&gt;pagetable = pagetable;
+  <span class="hljs-meta">#<span class="hljs-meta-keyword">if</span> defined (STRIDE)</span>
+  p-&gt;stride = <span class="hljs-number">1</span>;
+  p-&gt;pass = <span class="hljs-number">0</span>;
+  <span class="hljs-meta">#<span class="hljs-meta-keyword">endif</span></span>
+
+  <span class="hljs-comment">// Allocate a trapframe page.</span>
+  <span class="hljs-keyword">if</span>((p-&gt;trapframe = (struct trapframe *)kalloc()) == <span class="hljs-number">0</span>){
+    freeproc(p);
+    <span class="hljs-built_in">release</span>(&amp;p-&gt;lock);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+  }
+
+  <span class="hljs-keyword">if</span>(mappages(p-&gt;pagetable, TRAPFRAME - PGSIZE * (p-&gt;thread_id), PGSIZE,
+              (uint64)(p-&gt;trapframe), PTE_R | PTE_W) &lt; <span class="hljs-number">0</span>){
+    uvmunmap(pagetable, TRAMPOLINE, <span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
+    freeproc(p);
+    <span class="hljs-built_in">release</span>(&amp;p-&gt;lock);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+  }
+  <span class="hljs-built_in">memset</span>(&amp;p-&gt;context, <span class="hljs-number">0</span>, <span class="hljs-keyword">sizeof</span>(p-&gt;context));
+  p-&gt;context.ra = (uint64)forkret;
+  p-&gt;context.sp = p-&gt;kstack + PGSIZE;
+
+  <span class="hljs-keyword">return</span> p;
+}
+</div></code></pre>
+<h3 id="new-syscall-clone">New syscall clone()</h3>
+<p>The system call <code>clone()</code> is initialized with syscall number <code>26</code>. In <code>clone()</code>, we first fetch the argument <code>stack</code> with function <code>argaddr()</code>. After that, we increment the <code>num_thread</code> of caller process by one. The <code>thread_id</code> of the cloned thread is initialized with current value of <code>num_thread</code>. The <code>pid</code> and <code>pagetable</code> of the cloned thread is the smae with parent process. After that, the <code>allocproc_thread()</code> is called to initialized the PCB, trapframe and context of the cloned thread. When the <code>allocproc_thread()</code> returns, the <code>clone()</code> syscal initialized the content of <code>trapframe</code>, <code>sz</code>, file descriptor <code>opfile</code>, runnable variable <code>state</code>, and <code>parent</code> variables. The implementations of <code>clone()</code> is as follow</p>
+<pre class="hljs"><code><div><span class="hljs-function">uint64 <span class="hljs-title">sys_clone</span><span class="hljs-params">(<span class="hljs-keyword">void</span>)</span>
+</span>{
+  uint64 <span class="hljs-built_in">stack</span>;
+  argaddr(<span class="hljs-number">0</span>, &amp;<span class="hljs-built_in">stack</span>);
+  <span class="hljs-keyword">if</span>(<span class="hljs-built_in">stack</span> == <span class="hljs-number">0</span>)<span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+  <span class="hljs-keyword">int</span> i;
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">proc</span> *<span class="hljs-title">np</span>;</span>
+  <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">proc</span> *<span class="hljs-title">p</span> = <span class="hljs-title">myproc</span>();</span>
+  
+  acquire(&amp;p-&gt;lock);
+  p-&gt;num_thread++;
+  
+  <span class="hljs-keyword">int</span> tid = p-&gt;num_thread;
+  <span class="hljs-keyword">int</span> npid = p-&gt;pid;
+  <span class="hljs-keyword">pagetable_t</span> npagetable = p-&gt;pagetable;
+  <span class="hljs-built_in">release</span>(&amp;p-&gt;lock);
+  <span class="hljs-comment">// Allocate process.</span>
+  <span class="hljs-keyword">if</span>((np = allocproc_thread(npid, tid, npagetable)) == <span class="hljs-number">0</span>){
+    <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+  }
+
+
+  np-&gt;sz = p-&gt;sz;
+
+  <span class="hljs-comment">// copy saved user registers.</span>
+  *(np-&gt;trapframe) = *(p-&gt;trapframe);
+
+  <span class="hljs-comment">// Cause fork to return 0 in the child.</span>
+  np-&gt;trapframe-&gt;a0 = <span class="hljs-number">0</span>;
+  np-&gt;trapframe-&gt;sp = (uint64)<span class="hljs-built_in">stack</span>;
+
+  <span class="hljs-comment">// increment reference counts on open file descriptors.</span>
+  <span class="hljs-keyword">for</span>(i = <span class="hljs-number">0</span>; i &lt; NOFILE; i++)
+    <span class="hljs-keyword">if</span>(p-&gt;ofile[i])
+      np-&gt;ofile[i] = filedup(p-&gt;ofile[i]);
+  np-&gt;cwd = idup(p-&gt;cwd);
+
+  safestrcpy(np-&gt;name, p-&gt;name, <span class="hljs-keyword">sizeof</span>(p-&gt;name));
+
+  <span class="hljs-built_in">release</span>(&amp;np-&gt;lock);
+
+  acquire(&amp;wait_lock);
+  np-&gt;parent = p;
+  <span class="hljs-built_in">release</span>(&amp;wait_lock);
+
+  acquire(&amp;np-&gt;lock);
+  np-&gt;state = RUNNABLE;
+  <span class="hljs-built_in">release</span>(&amp;np-&gt;lock);
+
+  <span class="hljs-keyword">return</span> tid;
+} 
+</div></code></pre>
+<h3 id="modification-on-wait-and-freeproc">Modification on wait() and freeproc()</h3>
+<p>Instead of modifying <code>wait()</code>, we rewrite the kernel function <code>freeproc()</code>. We add a branch for thread and process in <code>freeproc()</code>. If the <code>proc *p</code> is a thread, namely <code>p-&gt;thread_id &gt; 0</code>,  we remove the <code>trapframe</code> from the <code>pagetable</code> using the following code <code>uvmunmap(p-&gt;pagetable, TRAPFRAME - (PGSIZE * p-&gt;thread_id), 1, 0);</code>. Unlike the process, free a thread does not free the <code>pagetable</code>.</p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span>
+<span class="hljs-title">freeproc</span><span class="hljs-params">(struct proc *p)</span>
+</span>{
+  <span class="hljs-keyword">if</span>(p-&gt;thread_id != <span class="hljs-number">0</span>){
+    <span class="hljs-keyword">if</span>(p-&gt;trapframe)
+    uvmunmap(p-&gt;pagetable, TRAPFRAME - (PGSIZE * p-&gt;thread_id), <span class="hljs-number">1</span>, <span class="hljs-number">0</span>);
+    p-&gt;trapframe = <span class="hljs-number">0</span>;
+    p-&gt;pagetable = <span class="hljs-number">0</span>;
+    p-&gt;thread_id = <span class="hljs-number">0</span>;
+    p-&gt;sz = <span class="hljs-number">0</span>;
+    p-&gt;pid = <span class="hljs-number">0</span>;
+    p-&gt;parent = <span class="hljs-number">0</span>;
+    p-&gt;name[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;
+    p-&gt;chan = <span class="hljs-number">0</span>;
+    p-&gt;killed = <span class="hljs-number">0</span>;
+    p-&gt;xstate = <span class="hljs-number">0</span>;
+    p-&gt;state = UNUSED;
+  }
+  <span class="hljs-keyword">else</span>{
+    <span class="hljs-keyword">if</span>(p-&gt;trapframe)
+      kfree((<span class="hljs-keyword">void</span>*)p-&gt;trapframe);
+    p-&gt;trapframe = <span class="hljs-number">0</span>;
+    <span class="hljs-keyword">if</span>(p-&gt;pagetable)
+      proc_freepagetable(p-&gt;pagetable, p-&gt;sz);
+    p-&gt;pagetable = <span class="hljs-number">0</span>;
+    p-&gt;sz = <span class="hljs-number">0</span>;
+    p-&gt;pid = <span class="hljs-number">0</span>;
+    p-&gt;parent = <span class="hljs-number">0</span>;
+    p-&gt;name[<span class="hljs-number">0</span>] = <span class="hljs-number">0</span>;
+    p-&gt;chan = <span class="hljs-number">0</span>;
+    p-&gt;killed = <span class="hljs-number">0</span>;
+    p-&gt;xstate = <span class="hljs-number">0</span>;
+    p-&gt;state = UNUSED;
+  }
+}
+</div></code></pre>
+<h2 id="part-2">Part 2:</h2>
+<h3 id="threadcreate-routine">thread_create() routine</h3>
+<p>The <code>thread_create()</code> function first allocate one page of user stack, and then call the <code>clone()</code> syscall. The newly cloned thread obtains a zero return value, then the <code>start_routine</code> is called. The parent process return directly.</p>
+<pre class="hljs"><code><div><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">thread_create</span><span class="hljs-params">(<span class="hljs-keyword">void</span> *(start_routine)(<span class="hljs-keyword">void</span>*), <span class="hljs-keyword">void</span> *arg)</span></span>{
+    uint64* user_stack = <span class="hljs-built_in">malloc</span>(PGSIZE) + PGSIZE;
+    <span class="hljs-keyword">int</span> ret = clone((<span class="hljs-keyword">void</span>*) user_stack);
+    <span class="hljs-keyword">if</span>(ret &lt; <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span>;
+    <span class="hljs-keyword">if</span>(ret != <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+    start_routine(arg);
+    <span class="hljs-built_in">exit</span>(<span class="hljs-number">0</span>);
+}
+</div></code></pre>
+<h3 id="spinlock-routine">spinlock routine</h3>
+<p>When a lock is initialized, the <code>lock-locked</code> is set to zero. In <code>lock_acquire()</code>, <code>while(__sync_lock_test_and_set(&amp;lock-&gt;locked, 1) != 0)</code> is used to acquire the lock. After that
+<code>__sync_synchronize();</code> is called for synchronization. In <code>lock_release()</code>, <code>__sync_lock_release(&amp;lock-&gt;locked);</code> is called after the synchronization.</p>
+<pre class="hljs"><code><div><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">lock_t</span> {</span>
+uint locked;
+}; 
+<span class="hljs-function"><span class="hljs-keyword">void</span>
+<span class="hljs-title">lock_init</span><span class="hljs-params">(struct <span class="hljs-keyword">lock_t</span>* lock)</span>
+</span>{
+  lock-&gt;locked = <span class="hljs-number">0</span>;
+}
+
+<span class="hljs-comment">// Acquire the lock.</span>
+<span class="hljs-comment">// Loops (spins) until the lock is acquired.</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span>
+<span class="hljs-title">lock_acquire</span><span class="hljs-params">(struct <span class="hljs-keyword">lock_t</span> *lock)</span>
+</span>{
+  <span class="hljs-keyword">while</span>(__sync_lock_test_and_set(&amp;lock-&gt;locked, <span class="hljs-number">1</span>) != <span class="hljs-number">0</span>)
+    ;
+  __sync_synchronize();
+}
+
+<span class="hljs-comment">// Release the lock.</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span>
+<span class="hljs-title">lock_release</span><span class="hljs-params">(struct <span class="hljs-keyword">lock_t</span> *lock)</span>
+</span>{
+  __sync_synchronize();
+  __sync_lock_release(&amp;lock-&gt;locked);
+}
+</div></code></pre>
+<h2 id="part-3-experimental-results">Part 3: Experimental Results</h2>
+<pre class="hljs"><code><div>xv6 kernel is booting
+
+hart 2 starting
+hart 1 starting
+init: starting sh
+$ lab3_test 10 3
+Round 1: thread 0 is passing the token to thread 1
+Round 2: thread 1 is passing the token to thread 2
+Round 3: thread 2 is passing the token to thread 0
+Round 4: thread 0 is passing the token to thread 1
+Round 5: thread 1 is passing the token to thread 2
+Round 6: thread 2 is passing the token to thread 0
+Round 7: thread 0 is passing the token to thread 1
+Round 8: thread 1 is passing the token to thread 2
+Round 9: thread 2 is passing the token to thread 0
+Round 10: thread 0 is passing the token to thread 1
+Frisbee simulation has finished, 10 rounds played in total
+$ lab3_test 21 20
+Round 1: thread 0 is passing the token to thread 1
+Round 2: thread 1 is passing the token to thread 2
+Round 3: thread 2 is passing the token to thread 3
+Round 4: thread 3 is passing the token to thread 4
+Round 5: thread 4 is passing the token to thread 5
+Round 6: thread 5 is passing the token to thread 6
+Round 7: thread 6 is passing the token to thread 7
+Round 8: thread 7 is passing the token to thread 8
+Round 9: thread 8 is passing the token to thread 9
+Round 10: thread 9 is passing the token to thread 10
+Round 11: thread 10 is passing the token to thread 11
+Round 12: thread 11 is passing the token to thread 12
+Round 13: thread 12 is passing the token to thread 13
+Round 14: thread 13 is passing the token to thread 14
+Round 15: thread 14 is passing the token to thread 15
+Round 16: thread 15 is passing the token to thread 16
+Round 17: thread 16 is passing the token to thread 17
+Round 18: thread 17 is passing the token to thread 18
+Round 19: thread 18 is passing the token to thread 19
+Round 20: thread 19 is passing the token to thread 0
+Round 21: thread 0 is passing the token to thread 1
+Frisbee simulation has finished, 21 rounds played in total
+$ 
+</div></code></pre>
+
+</body>
+</html>
