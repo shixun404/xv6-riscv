@@ -1,6 +1,6 @@
 # Lab3 Report by Enzuo Zhu and Shixun WU
 
-This report describes our work on Lab 3. Section 1, 2 describes our implementation of Part 1, and 2. Section 3 demonstrates our experimental results.  Here is the link to our video https://drive.google.com/file/d/1tfDxuuGesUYgBNltttsX1xB672o0Gp48/view?usp=sharing. 
+This report describes our work on Lab 3. Section 1, 2 describes our implementation of Part 1, and 2. Section 3 demonstrates our experimental results.  Here is the link to our video https://drive.google.com/file/d/19TDBcl8n51UYBU05qlp_Fv2H-bxFdYXz/view?usp=sharing. 
 
 Enzuo Zhu and Shixun Wu contribute to this project equally.
 
